@@ -39,4 +39,19 @@ import org.junit.jupiter.api.Test;
         assertEquals(0, new CompareToBuilder().append('G', 'G').toComparison());
         assertEquals(0, new CompareToBuilder().append('%', '%').toComparison());
     }
+
+    //Tests for the append method that compares booleans
+    @Test
+    public void appendBoolTest(){
+        boolean a = false;
+        boolean b = true;
+
+        //Different Boolean Value
+        assertTrue(new CompareToBuilder().append(a, b).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(b, a).toComparison() > 0);
+
+        //Self Equality
+        assertEquals(0, new CompareToBuilder().append(a, a).toComparison());
+        assertEquals(0, new CompareToBuilder().append(b, b).toComparison());
+    }
  }
