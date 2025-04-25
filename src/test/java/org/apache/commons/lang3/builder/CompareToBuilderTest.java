@@ -199,12 +199,31 @@ import org.junit.jupiter.api.Test;
         assertTrue(CompareToBuilder.reflectionCompare(obj1, obj4) < 0);
         assertTrue(CompareToBuilder.reflectionCompare(obj4, obj1) > 0);
     }
-    
+
     //Tests for append method that compares double arrays
     @Test
     public void appendDoubleArrayTest(){
         double[] a = {1.1};
         double[] b = {1.1, 1.1};
+
+        //Equals
+        assertEquals(0, new CompareToBuilder().append(a, a).toComparison());
+        assertEquals(0, new CompareToBuilder().append(b, b).toComparison());
+
+        //Null Handling
+        assertTrue(new CompareToBuilder().append(a, null).toComparison() > 0);
+        assertTrue(new CompareToBuilder().append(null, a).toComparison() < 0);
+
+        //Comparisons
+        assertTrue(new CompareToBuilder().append(a, b).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(b, a).toComparison() > 0);
+    }
+
+    //Tests for append method that compares byte arrays
+    @Test
+    public void appendByteArrayTest(){
+        byte[] a = {1};
+        byte[] b = {1, 1};
 
         //Equals
         assertEquals(0, new CompareToBuilder().append(a, a).toComparison());
