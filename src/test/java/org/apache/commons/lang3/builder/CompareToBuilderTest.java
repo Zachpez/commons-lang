@@ -260,4 +260,27 @@ import org.junit.jupiter.api.Test;
         assertTrue(new CompareToBuilder().append(3.0, 3.14159).toComparison() < 0);
         assertTrue(new CompareToBuilder().append(3.14159, 3.0).toComparison() > 0);
     }
+
+    //Tests for append method that compares bytes
+    @Test
+    public void appendByteTest(){
+        byte a = 0;
+        byte b = 127;
+        byte c = -128;
+
+        //Equals
+        assertEquals(0, new CompareToBuilder().append(b, b).toComparison());
+        assertEquals(0, new CompareToBuilder().append(c, c).toComparison());
+
+        //Comparisons
+        assertTrue(new CompareToBuilder().append(a, b).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(b, a).toComparison() > 0);
+
+        assertTrue(new CompareToBuilder().append(a, c).toComparison() > 0);
+        assertTrue(new CompareToBuilder().append(c, a).toComparison() < 0);
+
+        assertTrue(new CompareToBuilder().append(c, b).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(b, c).toComparison() > 0);
+    }
+//End of Top-Down Integration Testing
 }
