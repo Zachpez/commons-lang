@@ -1,6 +1,7 @@
 package org.apache.commons.lang3.builder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.commons.lang3.AbstractLangTest;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,25 @@ import org.junit.jupiter.api.Test;
                 .append(this.var1, obj2.var1)
                 .append(this.var2, obj2.var2)
                 .append(this.var3, obj2.var3)
+                .toComparison();
+        }
+    }
+
+    //Test object with multiple fields for Top-Down Integration test
+    public class TopDownTestObj implements Comparable<TopDownTestObj>{
+        private double[] var1;
+        private byte[] var2;
+    
+        public TopDownTestObj(double[] var1, byte[] var2){
+            this.var1 = var1;
+            this.var2 = var2;
+        }
+    
+        @Override
+        public int compareTo(TopDownTestObj obj2){
+            return new CompareToBuilder()
+                .append(this.var1, obj2.var1)
+                .append(this.var2, obj2.var2)
                 .toComparison();
         }
     }
@@ -145,5 +165,38 @@ import org.junit.jupiter.api.Test;
         assertTrue(new CompareToBuilder().append(a, e).toComparison() < 0);
         assertTrue(new CompareToBuilder().append(e, a).toComparison() > 0);
     }
-    //End of Bottom-Up Integration Testing
+//End of Bottom-Up Integration Testing
+
+//Testing Reflection Comparison using Top-Down Integration testing
+
+    //Tests for Reflection Compare to compare objects
+    @Test
+    public void reflectionCompareTest(){
+        double[] d1 = {1.1};
+        double[] d2 = {1.1, 1.1};
+
+        byte[] b1 = {1};
+        byte[] b2 = {1, 1};
+
+        TopDownTestObj obj1 = new TopDownTestObj(d1, b1);
+        TopDownTestObj obj2 = new TopDownTestObj(d1, b2);
+        TopDownTestObj obj3 = new TopDownTestObj(d2, b1);
+        TopDownTestObj obj4 = new TopDownTestObj(d2, b2);
+
+        //Equality
+        assertEquals(0, CompareToBuilder.reflectionCompare(obj1, obj1));
+        assertEquals(0, CompareToBuilder.reflectionCompare(obj4, obj4));
+  
+        //Nulls
+        assertThrows(NullPointerException.class, () -> CompareToBuilder.reflectionCompare(obj1, null));
+        assertThrows(NullPointerException.class, () -> CompareToBuilder.reflectionCompare(null, obj1));
+
+        //Comparisons
+        assertTrue(CompareToBuilder.reflectionCompare(obj1, obj2) < 0);
+        assertTrue(CompareToBuilder.reflectionCompare(obj2, obj1) > 0);
+        assertTrue(CompareToBuilder.reflectionCompare(obj1, obj3) < 0);
+        assertTrue(CompareToBuilder.reflectionCompare(obj3, obj1) > 0);
+        assertTrue(CompareToBuilder.reflectionCompare(obj1, obj4) < 0);
+        assertTrue(CompareToBuilder.reflectionCompare(obj4, obj1) > 0);
+    }
  }
