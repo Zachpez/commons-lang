@@ -10,7 +10,29 @@ import org.junit.jupiter.api.Test;
  */
 
  public class CompareToBuilderTest extends AbstractLangTest {
-    //Testing object comparisons using Bottom-Up Integration testing
+    //Test object with muiltiple fields for Bottom-up integration test
+    public class BottomUpTestObj implements Comparable<BottomUpTestObj>{
+        private int[] var1;
+        private char var2;
+        private boolean var3;
+    
+        public BottomUpTestObj(int[] var1, char var2, boolean var3){
+            this.var1 = var1;
+            this.var2 = var2;
+            this.var3 = var3;
+        }
+    
+        @Override
+        public int compareTo(BottomUpTestObj obj2){
+            return new CompareToBuilder()
+                .append(this.var1, obj2.var1)
+                .append(this.var2, obj2.var2)
+                .append(this.var3, obj2.var3)
+                .toComparison();
+        }
+    }
+        
+//Testing object comparisons using Bottom-Up Integration testing
 
     //Tests for the append method that compares ints
     @Test
@@ -86,4 +108,42 @@ import org.junit.jupiter.api.Test;
         assertTrue(new CompareToBuilder().append(c, e).toComparison() < 0);
         assertTrue(new CompareToBuilder().append(e, c).toComparison() > 0);
     }
+
+    //Tests for the append method that compares objects
+    @Test
+    public void appendObjectTest(){
+        int[] a1 = {1};
+        int[] a2 = {1, 1};
+
+        BottomUpTestObj a = new BottomUpTestObj(a1, 'a', false);
+        BottomUpTestObj b = new BottomUpTestObj(a2, 'a', false);
+        BottomUpTestObj c = new BottomUpTestObj(a1, 'z', false);
+        BottomUpTestObj d = new BottomUpTestObj(a1, 'a', true);
+        BottomUpTestObj e = new BottomUpTestObj(a2, 'z', true);
+
+        //Self Equality
+        assertEquals(0, new CompareToBuilder().append(a, a).toComparison());
+        assertEquals(0, new CompareToBuilder().append(b, b).toComparison());
+        
+        //Nulls
+        assertTrue(new CompareToBuilder().append(null, a).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(a, null).toComparison() > 0);
+
+        //Only Int Array Differs
+        assertTrue(new CompareToBuilder().append(a, b).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(b, a).toComparison() > 0);
+
+        //Only Char Differs
+        assertTrue(new CompareToBuilder().append(a, c).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(c, a).toComparison() > 0);
+
+        //Only Bool Differs
+        assertTrue(new CompareToBuilder().append(a, d).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(d, a).toComparison() > 0);
+
+        //Everything Differs
+        assertTrue(new CompareToBuilder().append(a, e).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(e, a).toComparison() > 0);
+    }
+    //End of Bottom-Up Integration Testing
  }
