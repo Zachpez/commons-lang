@@ -237,4 +237,27 @@ import org.junit.jupiter.api.Test;
         assertTrue(new CompareToBuilder().append(a, b).toComparison() < 0);
         assertTrue(new CompareToBuilder().append(b, a).toComparison() > 0);
     }
+
+    //Tests for append method that compares doubles
+    @Test
+    public void appendDoubleTest(){
+        //Equals
+        assertEquals(0, new CompareToBuilder().append(1.0, 1.0).toComparison());
+        assertEquals(0, new CompareToBuilder().append(3.14159, 3.14159).toComparison());
+        assertEquals(0, new CompareToBuilder().append(0.0, 0.0).toComparison());
+
+        //Positive vs Negative Comparison
+        assertTrue(new CompareToBuilder().append(0.0, -0.0).toComparison() > 0);
+        assertTrue(new CompareToBuilder().append(-0.0, 0.0).toComparison() < 0);
+
+        assertTrue(new CompareToBuilder().append(1.0, -1.0).toComparison() > 0);
+        assertTrue(new CompareToBuilder().append(-1.0, 1.0).toComparison() < 0);
+
+        //Regular Comparisons
+        assertTrue(new CompareToBuilder().append(1.0, 5.0).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(5.0, 1.0).toComparison() > 0);
+
+        assertTrue(new CompareToBuilder().append(3.0, 3.14159).toComparison() < 0);
+        assertTrue(new CompareToBuilder().append(3.14159, 3.0).toComparison() > 0);
+    }
 }
